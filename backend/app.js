@@ -6,8 +6,9 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 const userRouter = require('./routes/userRoutes');
-const subscriptionRouter = require('./routes/subscriptionRoute');
-const subscriptionPlanRouter = require('./routes/subscriptionPlanRoute');
+const tutorRouter = require('./routes/tutorRoutes');
+const subscriptionRouter = require('./routes/subscriptionRoutes');
+const subscriptionPlanRouter = require('./routes/subscriptionPlanRoutes');
 
 const AppError = require('./utils/appError');
 
@@ -27,6 +28,7 @@ app.use(cookieParser());
 
 // MOUNTING ROUTERS
 app.use('/api/users', userRouter);
+app.use('/api/tutors', tutorRouter);
 app.use('/api/subscription', subscriptionRouter);
 app.use('/api/subscriptionPlan', subscriptionPlanRouter);
 

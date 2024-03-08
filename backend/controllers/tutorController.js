@@ -34,7 +34,7 @@ const getTutor = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.signup = catchAsync(async (req, res, next) => {
+const signup = catchAsync(async (req, res, next) => {
   // IF USER ALREADY EXIST, CREATE ERROR
 
   let user = await User.findOne({ email: req.body.email });
@@ -60,10 +60,10 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   // SEND JWT TOKEN
-  sendJwtToken(tutor, 200, res);
+  sendJwtToken(tutor, res);
 });
 
-exports.login = catchAsync(async (req, res, next) => {
+const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   // 1. CHECK IF EMAIL PASSWORD EXIST
 
@@ -82,4 +82,4 @@ exports.login = catchAsync(async (req, res, next) => {
   sendJwtToken(tutor, res);
 });
 
-module.exports = { getTutors, getTutor };
+module.exports = { getTutors, getTutor, signup, login };

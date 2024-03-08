@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 // DESIGNING USER SCHEMA
 const userSchema = new mongoose.Schema({
@@ -16,19 +16,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     select: false,
+    length: [6, 'Password must be at least 6 characters long'],
   },
-  accountType: { type: String, enum: ["tutor", "student"] },
+  accountType: { type: String, enum: ['tutor', 'student'], default: 'student' },
   profilePicture: String,
-  languages: {
-    type: [String],
-    required: true,
-    validate: {
-      validator: function (languages) {
-        return languages.length > 0;
-      },
-      message: "At least one language is required",
-    },
-  },
+  languages: [String],
   joinedOn: { type: Date, default: Date.now },
 
   passwordChangedAt: Date,
@@ -38,9 +30,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // ENCRYPTING THE PASSWORD
-userSchema.pre("save", async function (next) {
+userSchema.pre('save', async function (next) {
   // IF THE PASSWORD IS NOT UPDATED WHILE UPDATING THE USER, WE DO NOT NEED TO ECRYPT IT
-  if (!this.isModified("password")) next();
+  if (!this.isModified('password')) next();
 
   this.password = await bcrypt.hash(this.password, 12);
   next();
@@ -52,24 +44,24 @@ userSchema.methods.correctPassword = async (enteredPass, dbPass) =>
 
 userSchema.methods.createToken = async function (str) {
   // This function is creating a random 64 characters string
-  const token = crypto.randomBytes(32).toString("hex");
+  const token = crypto.randomBytes(32).toString('hex');
   const hashedToken = await crypto
-    .createHash("sha256")
+    .createHash('sha256')
     .update(token)
-    .digest("hex");
+    .digest('hex');
 
-  if (str === "passwordReset") {
+  if (str === 'passwordReset') {
     // This is used to hash the string
     this.passwordResetToken = hashedToken;
     this.passwordResetExpires = Date.now() + 15 * 60 * 1000;
     // Means 1000 * 60 means,, 60 sec i,e 1 min and * 10 means 10 min
     // So the token will expire in 10 minutes
-  } else if (str === "emailConfirmation") {
+  } else if (str === 'emailConfirmation') {
     this.emailConfirmationToken = hashedToken;
   }
   return token;
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;

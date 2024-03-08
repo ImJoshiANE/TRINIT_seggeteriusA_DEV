@@ -1,14 +1,14 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const subscriptionPlanSchema = new mongoose.Schema({
-  tutor: { type: Schema.Types.ObjectId, ref: "User" }, // Tutor ID
-  name: {
+  tutor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Tutor ID
+  title: {
     type: String,
     required: true,
   },
   description: String,
-  duration: { type: Number, enum: [30, 45, 60] }, // in minutes
-  maxSessionsPerMonth: {
+  duration: { type: Number, enum: [1, 3, 6] }, // in months
+  minSessionsPerMonth: {
     type: Number,
     required: true,
   },
@@ -17,18 +17,22 @@ const subscriptionPlanSchema = new mongoose.Schema({
     default: Date.now,
   }, // Date from which the plan becomes available
   availableUntil: Date, // Date until which the plan remains available
-  timeSlots: [
-    {
-      dayOfWeek: { type: Number, min: 0, max: 6 }, // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-      startTime: String, // HH:MM format
-      endTime: String, // HH:MM format
-    },
-  ],
-  status: { type: String, enum: ["Active", "Expired", "Canceled"] },
+  timeSlot: {
+    dayOfWeek: { type: Number, min: 0, max: 6 }, // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    startTime: String, // HH:MM format
+    duration: { type: Number, enum: [30, 45, 60] }, // HH:MM format
+  },
+
+  language: {
+    type: String,
+    required: true,
+  },
+
+  isAvailable: { type: Boolean, default: true },
 });
 
 const SubscriptionPlan = mongoose.model(
-  "SubscriptionPlan",
+  'SubscriptionPlan',
   subscriptionPlanSchema
 );
 

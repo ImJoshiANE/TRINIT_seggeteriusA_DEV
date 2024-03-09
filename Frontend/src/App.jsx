@@ -2,12 +2,10 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { Button } from "./components/ui/Button";
+import UserDashboard from "./pages/UserDashboard";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return <Button className="m-10" >Submit</Button>;
+  return <UserDashboard />;
 }
 
 export default App;

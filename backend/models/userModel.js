@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 // DESIGNING USER SCHEMA
 const userSchema = new mongoose.Schema({
@@ -22,6 +23,7 @@ const userSchema = new mongoose.Schema({
   profilePicture: String,
   languages: [String],
   joinedOn: { type: Date, default: Date.now },
+  emailConfirmed: { type: Boolean, default: false },
 
   passwordChangedAt: Date,
   passwordResetToken: String,

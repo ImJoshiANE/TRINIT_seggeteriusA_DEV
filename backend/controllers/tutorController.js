@@ -65,17 +65,7 @@ const signup = catchAsync(async (req, res, next) => {
 });
 
 const login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
-  // 1. CHECK IF EMAIL PASSWORD EXIST
-
-  if (!email || !password) {
-    return next(new AppError('Please enter email and password!', 404));
-  }
-  // 2. CHECK IF USER EXIST AND PASSWORD IS CORRECT
-  const user = await User.findOne({ email }).select('+password');
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('Invalid Email or Password!', 500));
-  }
+  const user = await verifyUser(req, res, next);
 
   const tutor = await Tutor.findOne({ user: user._id });
 

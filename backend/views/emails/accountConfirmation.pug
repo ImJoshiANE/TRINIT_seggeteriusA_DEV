@@ -1,9 +1,9 @@
 extends baseEmail
 
 block content  
-  p Hi,
-    p=`We're glad to tell you that ${firstName} has invited to join ${grpName}.`
-    p We are sharing a link from which you can directly join the room!! Hope you to see there.
+  p= `Hi ${firstName},`
+    p Welcome to ShopOnline, we're glad to have you 🎉🙏
+    p We're working hard to prevent people creating fake accounts. So we want you to confirm your email!! Please do so by clicking on the button below!!
     table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
       tbody
         tr
@@ -12,6 +12,6 @@ block content
               tbody
                 tr
                   td
-                    a(href=`${url}`, target='_blank')= `Click here to join ${grpName}`
+                    a(href=`${url}`, target='_blank') Click here to confirm your email
     p If you need any help!! Please don't hesisate to contact us!!
-    p - Anuj Sharma, Developer
+    p - Anuj Sharma, CEO

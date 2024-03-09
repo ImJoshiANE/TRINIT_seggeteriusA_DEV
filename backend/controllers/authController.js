@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const Tutor = require('../models/tutorModel');
 const { catchAsync } = require('../utils/util');
 const AppError = require('../utils/appError');
+const Email = require('../utils/email');
 
 exports.restrictTo = (...accTypes) => {
   return (req, res, next) => {
@@ -36,15 +37,20 @@ exports.isloggedIn = catchAsync(async (req, res, next) => {
   // 3. CHECK IF USER STILL EXIST
   const currUser = await User.findOne({ _id: decoded.id });
 
+  let currTutor;
+
   if (!currUser) {
-    return next();
+    currTutor = await Tutor.findOne({ _id: decoded.id }).populate('user');
+
+    if (!currTutor)
+      return next(
+        new AppError(`User doesn't exists now, please log in again`, 401)
+      );
   }
 
   // 4. CHECK IF USER CHANGED PASSWORD AFTER JWT SIGN
   // NOT NEEDED NOW
 
-  // PASSING THE USER TO RES.LOCALS, SO THAT TO ACCESS IT IN PUG
-  res.locals.user = currUser;
   next();
 });
 
@@ -96,6 +102,22 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+const verifyUser = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+  // 1. CHECK IF EMAIL PASSWORD EXIST
+
+  if (!email || !password) {
+    return next(new AppError('Please enter email and password!', 404));
+  }
+  // 2. CHECK IF USER EXIST AND PASSWORD IS CORRECT
+  const user = await User.findOne({ email }).select('+password');
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError('Invalid Email or Password!', 500));
+  }
+
+  return user;
+});
+
 // JWT RECOMMENDS THE SECRET LENGTH TO BE OF ATLEAST 32 CHARACTER
 const sendJwtToken = (user, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -132,6 +154,31 @@ const sendConfirmationEmail = catchAsync(async (user, req) => {
   await new Email(user, confirmationURL).sendAccountConfirmation();
 });
 
+exports.confirmEmail = catchAsync(async (req, res, next) => {
+  const hashedToken = await crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({ emailConfirmationToken: hashedToken });
+
+  if (!user) {
+    return next(
+      new AppError('This token is invalid! Please get a new token', 400)
+    );
+  }
+
+  user.emailConfirmed = true;
+  user.emailConfirmationToken = undefined;
+
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Email confirmed successfully',
+  });
+});
+
 exports.signup = catchAsync(async (req, res, next) => {
   // IF USER ALREADY EXIST, CREATE ERROR
 
@@ -154,17 +201,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
-  // 1. CHECK IF EMAIL PASSWORD EXIST
-
-  if (!email || !password) {
-    return next(new AppError('Please enter email and password!', 404));
-  }
-  // 2. CHECK IF USER EXIST AND PASSWORD IS CORRECT
-  const user = await User.findOne({ email }).select('+password');
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('Invalid Email or Password!', 500));
-  }
+  const user = await verifyUser(req, res, next);
 
   // 3. SEND TOKEN TO CLIENT
   sendJwtToken(user, res);

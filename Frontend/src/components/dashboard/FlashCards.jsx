@@ -1,6 +1,6 @@
 import React from "react";
 import Heading2 from "../Heading2";
-import { OneFlashCard } from "./OneFlashCard";
+import OneFlashCard from "./OneFlashCard";
 
 const FlashCards = () => {
   const cardsData = [
@@ -39,13 +39,11 @@ const FlashCards = () => {
   ];
   return (
     <>
-    <Heading2 heading={"FlashCards"} className="mb-14"  />
-      {/* {cardsData.map((data) => {
-        <OneFlashCard front={data.front} back={data.back} />
-      }
-      )} */}
-      <div className="flex items-center justify-center w-[100%]">
-        <OneFlashCard />
+      <Heading2 heading={"FlashCards"} className="mb-14" />
+      <div className=" flex justify-center items-center ">
+        {cardsData.map(({data}) => {
+          return <OneFlashCard data={data} className="mx-4"/>
+        })}
       </div>
     </>
   );

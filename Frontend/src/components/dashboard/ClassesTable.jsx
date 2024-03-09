@@ -14,7 +14,7 @@ import Heading2 from "../Heading2";
 
 // Take props later instead of the dummy array
 
-export function ClassesTable({type}) {
+export function ClassesTable({type, user}) {
   const upcomingSessions = [
     {
       tutor: "Micheal Arock",
@@ -91,8 +91,8 @@ export function ClassesTable({type}) {
       <TableCaption>. . . . . . . . . . . . . . . .</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead >Tutor-Image</TableHead>
-          <TableHead>Tutor Name</TableHead>
+          <TableHead >{user ? "Tutor-Image" : "Student-Image"}</TableHead>
+          <TableHead>{user ? "Tutor Name" : "Student Name"}</TableHead>
           <TableHead>Start Timing</TableHead>
           <TableHead className="text-right">Duration</TableHead>
         </TableRow>

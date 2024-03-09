@@ -16,7 +16,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
 import { GlobalContext } from "@/App";
 
-
 const Login = () => {
   const { toast } = useToast();
   const [type, setType] = useState("Student");
@@ -66,18 +65,17 @@ const Login = () => {
         { ...data },
         { withCredentials: true }
       );
-      console.log(res);
 
       if (res.data?.status === "success") {
         toast({
           description: "Signup successful"
         });
         setUser({
-          fullName: res.data.fullName,
-          email: res.data.email,
-          accountType: res.data.accountType,
-          profilePicture: res.data.profilePicture,
-          languages: res.data.languages,
+          fullName: res.data.user.fullName,
+          email: res.data.user.email,
+          accountType: res.data.user.accountType,
+          profilePicture: res.data.user.profilePicture,
+          languages: res.data.user.languages,
         });
         setIsOpen(!isOpen);
       } else if (res.data?.status === "error") {
@@ -130,12 +128,13 @@ const Login = () => {
         toast({
           description: "Login successful",
         });
+        console.log(res);
         setUser({
-          fullName: res.data.fullName,
-          email: res.data.email,
-          accountType: res.data.accountType,
-          profilePicture: res.data.profilePicture,
-          languages: res.data.languages,
+          fullName: res.data.user.fullName,
+          email: res.data.user.email,
+          accountType: res.data.user.accountType,
+          profilePicture: res.data.user.profilePicture,
+          languages: res.data.user.languages,
         });
         setIsOpen(!isOpen);
       } else if (res.data?.status === "error") {

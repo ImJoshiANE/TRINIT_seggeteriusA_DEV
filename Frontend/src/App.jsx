@@ -14,8 +14,9 @@ import SetSchedule from "./components/dashboard/SetSchedule";
 import HomePage from "./pages/HomePage";
 import TutorProfile from "./components/tutorProfile/TutorProfile";
 import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
+import axios from "axios";
 // import VideoScreen from "./components/videoscreen/VideoScreen";
-
 
 export const GlobalContext = createContext();
 const userInitialValue = {
@@ -42,9 +43,39 @@ const languages = [
 
 function App() {
   const [user, setUser] = useState(userInitialValue);
+  const { toast } = useToast();
+
+  const checkLogin = async () => {
+    try {
+      const res = await axios.get(`api/users/isloggedIn`, {
+        withCredentials: true,
+      });
+
+      if (res.data?.status === "success") {
+        console.log(res);
+        setUser({
+          fullName: res.data.data.fullName,
+          email: res.data.data.email,
+          accountType: res.data.data.accountType,
+          profilePicture: res.data.data.profilePicture,
+          languages: res.data.data.languages,
+        });
+      } else if (res.data?.status === "error") {
+        toast({
+          description: "Something went wrong",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      const msg = error.response.data.message || error.response.data.error;
+      toast({
+        description: msg,
+      });
+    }
+  };
 
   useEffect(() => {
-
+    checkLogin();
   }, []);
 
   return (

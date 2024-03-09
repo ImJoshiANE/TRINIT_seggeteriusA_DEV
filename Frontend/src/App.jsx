@@ -1,13 +1,18 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React, { createContext, useState } from "react";
 import "./App.css";
-import { Button } from "./components/ui/Button";
+import Header from "./components/header/Header";
+import Footer from "./components/footer/Footer";
+
+export const GlobalContext = createContext();
+const userInitialValue = {
+  fullName: "Rishikesh Bhakare",
+  email: "",
+  accountType: "Student",
+  profilePicture: "",
+  languages: [],
+}
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return <Button className="m-10" >Submit</Button>;
 }
 
 export default App;

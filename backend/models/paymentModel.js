@@ -6,7 +6,18 @@ const paymentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  paymentStatus: { type: String, enum: ['Completed', 'Pending', 'Failed'] },
+  razorpay_order_id: {
+    type: String,
+    required: true,
+  },
+  razorpay_payment_id: {
+    type: String,
+    required: true,
+  },
+  razorpay_signature: {
+    type: String,
+    required: true,
+  },
   paymentMethod: String,
 });
 

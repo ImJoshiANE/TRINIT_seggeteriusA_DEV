@@ -9,6 +9,8 @@ const userRouter = require('./routes/userRoutes');
 const tutorRouter = require('./routes/tutorRoutes');
 const subscriptionRouter = require('./routes/subscriptionRoutes');
 const subscriptionPlanRouter = require('./routes/subscriptionPlanRoutes');
+const paymentRouter = require('./routes/paymentRoutes');
+const flashCardRouter = require('./routes/flashCardRoutes');
 
 const AppError = require('./utils/appError');
 
@@ -31,6 +33,8 @@ app.use('/api/users', userRouter);
 app.use('/api/tutors', tutorRouter);
 app.use('/api/subscription', subscriptionRouter);
 app.use('/api/subscriptionPlan', subscriptionPlanRouter);
+app.use('/api/payment', paymentRouter);
+app.use('/api/flashCard', flashCardRouter);
 
 // A MIDDLEWARE WHICH RUNS A UNIDENFIED ROUTE IS CALLED
 app.all('*', (req, res, next) => {

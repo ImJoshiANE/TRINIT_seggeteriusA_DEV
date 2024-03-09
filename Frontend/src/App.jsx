@@ -2,6 +2,16 @@ import React, { createContext, useState } from "react";
 import "./App.css";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import UserDashboard from "./pages/UserDashboard";
+import TutorDashboard from "./pages/TutorDashboard";
+import Classes from "./components/dashboard/Classes";
+import Profile from "./components/dashboard/Profile";
+import FlashCards from "./components/dashboard/FlashCards";
+import SetSchedule from "./components/dashboard/SetSchedule";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 
 export const GlobalContext = createContext();
 const userInitialValue = {
@@ -11,19 +21,6 @@ const userInitialValue = {
   profilePicture: "",
   languages: [],
 }
-
-function App() {
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import UserDashboard from "./pages/UserDashboard";
-import TutorDashboard from "./pages/TutorDashboard";
-import Classes from "./components/dashboard/Classes";
-import Profile from "./components/dashboard/Profile";
-import FlashCards from "./components/dashboard/FlashCards";
-import SetSchedule from "./components/dashboard/SetSchedule";
 
 const router = createBrowserRouter([
   {

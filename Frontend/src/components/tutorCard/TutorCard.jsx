@@ -10,8 +10,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge"
 import { Button } from '../ui/button';
+import {useNavigate} from "react-router-dom";
 
 const TutorCard = ({tutor}) => {
+  const navigate = useNavigate();
   const avgPrice = tutor.pricing.reduce((acc, it) => acc + it.price, 0) / tutor.pricing.length;
   return (
     <Card className="h-50 w-60">
@@ -40,7 +42,9 @@ const TutorCard = ({tutor}) => {
       </CardContent>
       <CardFooter className="flex justify-between">
         <p className="text-sm">₹{avgPrice}/hour</p>
-        <Button variant="outline">Check</Button>
+        <Button variant="outline" onClick={() => {console.log("hi");
+        navigate("/tutorProfile");
+        }}>Check</Button>
       </CardFooter>
     </Card>
   );

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import axios from "axios";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,22 +13,12 @@ import { Button } from "../ui/button";
 import Select from "react-select";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useToast } from "@/components/ui/use-toast";
+import { GlobalContext } from "@/App";
 
-const languages = [
-  { value: "hindi", label: "Hindi" },
-  { value: "bengali", label: "Bengali" },
-  { value: "telugu", label: "Telugu" },
-  { value: "marathi", label: "Marathi" },
-  { value: "tamil", label: "Tamil" },
-  { value: "urdu", label: "Urdu" },
-  { value: "gujarati", label: "Gujarati" },
-  { value: "kannada", label: "Kannada" },
-  { value: "odia", label: "Odia" },
-  { value: "punjabi", label: "Punjabi" },
-  { value: "english", label: "English" },
-];
 
 const Login = () => {
+  const { toast } = useToast();
   const [type, setType] = useState("Student");
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
@@ -35,9 +26,132 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { languages, setUser } = useContext(GlobalContext);
 
   const handleMultiChange = (selectedOptions) => {
-    setSelectedLanguages(selectedOptions);
+    const langs = selectedOptions.map(option => option.value);
+    setSelectedLanguages(langs);
+  };
+
+  const handleSubmitSignup = async (e) => {
+    e.preventDefault();
+    console.log("cj");
+    if (!email || !password) {
+      toast({
+        description: "Please fill all the details",
+      });
+      return;
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+      toast({
+        description: "Please enter a valid email",
+      });
+      return;
+    }
+
+    const data = {
+      email,
+      password,
+      fullName: name,
+      languages: selectedLanguages,
+    };
+
+    try {
+      setIsSubmitting(true);
+      const res = await axios.post(
+        `/api/users/signup`,
+        { ...data },
+        { withCredentials: true }
+      );
+      console.log(res);
+
+      if (res.data?.status === "success") {
+        toast({
+          description: "Signup successful"
+        });
+        setUser({
+          fullName: res.data.fullName,
+          email: res.data.email,
+          accountType: res.data.accountType,
+          profilePicture: res.data.profilePicture,
+          languages: res.data.languages,
+        });
+        setIsOpen(!isOpen);
+      } else if (res.data?.status === "error") {
+        toast({
+          description: "Something went wrong!",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      const msg = error.response.data.message || error.response.data.error;
+      toast({
+        description: msg,
+      });
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmitLogin = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast({
+        description: "Please fill all the fields",
+      });
+      return;
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+      toast({
+        description: "Please enter a valid email",
+      });
+      return;
+    }
+
+    const data = {
+      email,
+      password,
+    };
+
+    try {
+      setIsSubmitting(true);
+      const res = await axios.post(
+        `api/users/login`,
+        { ...data },
+        { withCredentials: true }
+      );
+
+      if (res.data?.status === "success") {
+        toast({
+          description: "Login successful",
+        });
+        setUser({
+          fullName: res.data.fullName,
+          email: res.data.email,
+          accountType: res.data.accountType,
+          profilePicture: res.data.profilePicture,
+          languages: res.data.languages,
+        });
+        setIsOpen(!isOpen);
+      } else if (res.data?.status === "error") {
+        toast({
+          description: "Something went wrong",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      const msg = error.response.data.message || error.response.data.error;
+      toast({
+        description: msg
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -47,12 +161,13 @@ const Login = () => {
     console.log("password", password);
     console.log("confirmPassword", confirmPassword);
     console.log("selectedLanguages", selectedLanguages);
-  }, [type, email, name, password, confirmPassword, selectedLanguages])
-
+  }, [type, email, name, password, confirmPassword, selectedLanguages]);
 
   return (
-    <Dialog>
-      <DialogTrigger className="bg-slate-400 text-xl px-4 py-1 rounded-full">{isLogin ? "Login" : "Signup"}</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
+      <DialogTrigger className="bg-slate-400 text-xl px-4 py-1 rounded-full">
+        {isLogin ? "Login" : "Signup"}
+      </DialogTrigger>
       <DialogContent className="w-80">
         <DialogHeader>
           <DialogTitle>{isLogin ? "Login" : "Signup"}</DialogTitle>
@@ -65,7 +180,7 @@ const Login = () => {
             <RadioGroup
               defaultValue="Student"
               className="flex items-center justify-between w-10"
-              onValueChange={value => setType(value)}
+              onValueChange={(value) => setType(value)}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Tutor" id="tutor" />
@@ -97,7 +212,7 @@ const Login = () => {
           {!isLogin && (
             <Input
               placeholder={"Confirm it"}
-              onChange={e => setConfirmPassword(e.target.value)}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               type="password"
             />
           )}
@@ -111,7 +226,13 @@ const Login = () => {
           />
         )}
         <div className="flex justify-between items-center">
-          <Button>{isLogin ? "Login" : "Signup"}</Button>
+          <Button
+            onClick={(e) => {
+              isLogin ? handleSubmitLogin(e) : handleSubmitSignup(e);
+            }}
+          >
+            {isLogin ? "Login" : "Signup"}
+          </Button>
           <p>
             {isLogin ? (
               <>

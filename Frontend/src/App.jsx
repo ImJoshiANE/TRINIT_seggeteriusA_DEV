@@ -1,4 +1,4 @@
-import React, { Children, createContext, useState } from "react";
+import React, { Children, createContext, useEffect, useState } from "react";
 import "./App.css";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
@@ -14,6 +14,7 @@ import SetSchedule from "./components/dashboard/SetSchedule";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import TutorProfile from "./components/tutorProfile/TutorProfile";
+import { Toaster } from "@/components/ui/toaster";
 
 export const GlobalContext = createContext();
 const userInitialValue = {
@@ -24,10 +25,29 @@ const userInitialValue = {
   languages: [],
 };
 
+const languages = [
+  { value: "hindi", label: "Hindi" },
+  { value: "bengali", label: "Bengali" },
+  { value: "telugu", label: "Telugu" },
+  { value: "marathi", label: "Marathi" },
+  { value: "tamil", label: "Tamil" },
+  { value: "urdu", label: "Urdu" },
+  { value: "gujarati", label: "Gujarati" },
+  { value: "kannada", label: "Kannada" },
+  { value: "odia", label: "Odia" },
+  { value: "punjabi", label: "Punjabi" },
+  { value: "english", label: "English" },
+];
+
 function App() {
   const [user, setUser] = useState(userInitialValue);
+
+  useEffect(() => {
+    
+  }, []);
+
   return (
-    <GlobalContext.Provider value={{ user }}>
+    <GlobalContext.Provider value={{ user, languages, setUser }}>
       <BrowserRouter>
         <Header />
         <Routes>
@@ -48,6 +68,7 @@ function App() {
           <Route path="/tutorProfile" element={<TutorProfile />} />
         </Routes>
         <Footer />
+        <Toaster />
       </BrowserRouter>
     </GlobalContext.Provider>
   );

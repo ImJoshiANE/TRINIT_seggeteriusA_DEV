@@ -11,7 +11,7 @@ import Profile from "./components/dashboard/Profile";
 import FlashCards from "./components/dashboard/FlashCards";
 import SetSchedule from "./components/dashboard/SetSchedule";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
+import VideoScreen from "./components/videoscreen/VideoScreen";
 
 export const GlobalContext = createContext();
 const userInitialValue = {
@@ -20,7 +20,7 @@ const userInitialValue = {
   accountType: "Student",
   profilePicture: "",
   languages: [],
-}
+};
 
 const router = createBrowserRouter([
   {
@@ -66,6 +66,14 @@ const router = createBrowserRouter([
         element: <SetSchedule />,
       },
     ],
+  },
+  {
+    path: "/tutorlive/:id",
+    element: <VideoScreen isStudent={false} />,
+  },
+  {
+    path: "/studentlive/:id",
+    element: <VideoScreen isStudent={true} />,
   },
 ]);
 

@@ -6,7 +6,7 @@ const Sidebar = ({ user }) => {
   const location = useLocation();
 
   const isActive = (path) => {
-    const pathName = (isUser ? "/userdashboard/" : "/tutordashboard/") + path;
+    const pathName = "/dashboard/" + path;
     return location.pathname == pathName;
   };
 

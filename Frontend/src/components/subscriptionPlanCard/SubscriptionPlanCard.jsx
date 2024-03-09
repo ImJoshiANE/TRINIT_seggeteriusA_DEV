@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { isUpcomingOrNot } from "@/utils/isUpcoming";
+import { useToast } from "../ui/use-toast";
 
 const DaysComponent = ({ selectedDays }) => {
   const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];

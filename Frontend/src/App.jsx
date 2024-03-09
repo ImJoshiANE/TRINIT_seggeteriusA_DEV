@@ -41,6 +41,10 @@ const languages = [
   { value: "english", label: "English" },
 ];
 
+const isTutor = () => {
+  userInitialValue.FlashCardsaccountType === "tutor";
+};
+
 function App() {
   const [user, setUser] = useState(userInitialValue);
   const { toast } = useToast();
@@ -84,26 +88,26 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/userdashboard" element={<UserDashboard />}>
+          <Route path="/dashboard" element={isTutor() ? <TutorDashboard/> : <UserDashboard />}>
             <Route index element={<Profile />} />
             <Route path="profile" element={<Profile />} />
             <Route path="classes" element={<Classes />} />
-            <Route path="flashcards" element={<FlashCards />} />
+            <Route path="flashcards" element={isTutor() ? <SetSchedule/> : <FlashCards />} />
           </Route>
-          <Route path="/tutordashboard" element={<TutorDashboard />}>
+          {/* <Route path="/tutordashboard" element={<TutorDashboard />}>
             <Route index element={<Profile />} />
             <Route path="profile" element={<Profile />} />
             <Route path="classes" element={<Classes />} />
             <Route path="setschedule" element={<SetSchedule />} />
-          </Route>
-          <Route path="/setschedule" element={<SetSchedule />} />
+          </Route> */}
+          {/* <Route path="/setschedule" element={<SetSchedule />} /> */}
           <Route path="/tutorProfile" element={<TutorProfile />} />
           {/* <Route path="/tutorlive/:id" element={<VideoScreen isStudent={false} />} />
           <Route path="/studentlive/:id" element={<VideoScreen isStudent={true} />} /> */}
         </Routes>
-        <Footer />
         <Toaster />
       </BrowserRouter>
+      {/* <Footer /> */}
     </GlobalContext.Provider>
   );
 }

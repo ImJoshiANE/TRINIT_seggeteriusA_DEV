@@ -8,21 +8,21 @@ import { styled } from "@mui/system";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { ButtonDemo } from "./ButtonDemo";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AvatarDemo } from "./AvatarDemo";
 import Heading2 from "../Heading2";
+import { GlobalContext } from "@/App";
 
-export default function Profile({ user }) {
-  const [isUser, setIsuser] = useState(user);
+export default function Profile() {
+  // const [isUser, setIsuser] = useState(user);
+  const { accountType } = useContext(GlobalContext);
 
   // Later populate with logged in user
   const [fName, setfName] = useState("Dheeraj");
   const [lName, setlName] = useState("Kumar");
   const [email, setEmail] = useState("dkjoshi@gmail.com");
-  // const [nativeLanguage, setNativeLanguage] = useState();
-  // const [fluentLanguage, setFluentLanguage] = useState();
   const [basicRate, setBasicRate] = useState(20);
   const [intermediateRate, setIntermediateRate] = useState(30);
   const [advancedRate, setAdvancedRate] = useState(50);
@@ -56,11 +56,17 @@ export default function Profile({ user }) {
   //   return index !== -1;
   // };
 
+  const isTutor = () => {
+    accountType === "tutor";
+  };
+
   const validRate = (value) => {
     return !isNaN(parseFloat(value)) && isFinite(value);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    console.log();
+  };
 
   return (
     <>
@@ -129,34 +135,42 @@ export default function Profile({ user }) {
             onChange={(e) => setFluentLanguage(e.target.value)}
           />
         </div> */}
-        <div className="flex items-center justify-between">
-          <TextField
-            label="Beginner Hourly Rates"
-            defaultValue={20}
-            value={basicRate}
-            onChange={(e) => setBasicRate(e.target.value)}
-            error={!validRate(basicRate) && true}
-            helperText={!validRate(basicRate) && "Invalid Rate"}
-          />
-          <TextField
-            label="Intermediate Hourly Rates"
-            defaultValue={30}
-            value={intermediateRate}
-            onChange={(e) => setIntermediateRate(e.target.value)}
-            error={!validRate(intermediateRate) && true}
-            helperText={!validRate(intermediateRate) && "Invalid Rate"}
-          />
-        </div>
-        <div>
-          <TextField
-            label="Advanced Hourly Rates"
-            defaultValue={50}
-            value={advancedRate}
-            onChange={(e) => setAdvancedRate(e.target.value)}
-            error={!validRate(advancedRate) && true}
-            helperText={!validRate(advancedRate) && "Invalid Rate"}
-          />
-        </div>
+        {isTutor() ? (
+          <div className="flex items-center justify-between">
+            <TextField
+              label="Beginner Hourly Rates"
+              defaultValue={20}
+              value={basicRate}
+              onChange={(e) => setBasicRate(e.target.value)}
+              error={!validRate(basicRate) && true}
+              helperText={!validRate(basicRate) && "Invalid Rate"}
+            />
+            <TextField
+              label="Intermediate Hourly Rates"
+              defaultValue={30}
+              value={intermediateRate}
+              onChange={(e) => setIntermediateRate(e.target.value)}
+              error={!validRate(intermediateRate) && true}
+              helperText={!validRate(intermediateRate) && "Invalid Rate"}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
+        {isTutor() ? (
+          <div>
+            <TextField
+              label="Advanced Hourly Rates"
+              defaultValue={50}
+              value={advancedRate}
+              onChange={(e) => setAdvancedRate(e.target.value)}
+              error={!validRate(advancedRate) && true}
+              helperText={!validRate(advancedRate) && "Invalid Rate"}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
         <div className="z-50">
           <h6 className="ml-2 mt-3">Languages</h6>
           <Select
@@ -174,21 +188,25 @@ export default function Profile({ user }) {
         </div>
       </Box>
 
-      <Box
-        sx={{
-          width: 625,
-          maxWidth: "100%",
-        }}
-      >
-        <TextField
-          fullWidth
-          multiline
-          rows={6}
-          label="Bio"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-        />
-      </Box>
+      {isTutor() ? (
+        <Box
+          sx={{
+            width: 625,
+            maxWidth: "100%",
+          }}
+        >
+          <TextField
+            fullWidth
+            multiline
+            rows={6}
+            label="Bio"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+          />
+        </Box>
+      ) : (
+        <></>
+      )}
 
       <ButtonDemo
         onClick={handleSubmit}

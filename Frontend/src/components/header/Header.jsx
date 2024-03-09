@@ -18,7 +18,7 @@ const Header = () => {
       <div>
         <Avatar className="hover:cursor-pointer flex">
           {user.email ? (
-            <div onClick={() => navigate("/userdashboard")}>
+            <div onClick={() => navigate("/dashboard")}>
               <AvatarImage src={user.profilePicture} />
               <div className="h-10 w-10 bg-slate-400 flex items-center justify-center rounded-full">
                 <AvatarFallback>

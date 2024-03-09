@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const subscriptionSchema = new mongoose.Schema({
   student: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  tutor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   subscriptionPlan: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'SubscriptionPlan',

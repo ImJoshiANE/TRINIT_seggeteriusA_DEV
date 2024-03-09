@@ -34,7 +34,6 @@ const createSubscription = catchAsync(async (req, res, next) => {
 
   const subscription = await Subscription.create({
     student: req.user.id,
-    tutor,
     subscriptionPlan,
     startDate,
   });

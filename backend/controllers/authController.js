@@ -1,11 +1,14 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const Tutor = require('../models/tutorModel');
 const { catchAsync } = require('../utils/util');
 const AppError = require('../utils/appError');
 
-exports.restrictTo = (...roles) => {
+exports.restrictTo = (...accTypes) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    const userType = req.user?.accountType || req.tutor?.user.accountType;
+    console.log(userType, 'userRole');
+    if (!accTypes.includes(userType)) {
       return next(
         new AppError('You are not allowed to perform this action', 403)
       );
@@ -50,8 +53,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 1. GET THE TOKEN IF IT EXIST
   let token;
 
-  console.log(req.cookies);
-
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
@@ -69,23 +70,34 @@ exports.protect = catchAsync(async (req, res, next) => {
   const decoded = await jwt.verify(token, process.env.JWT_SECRET);
 
   // 3. CHECK IF USER STILL EXIST
-  const currUser = await User.findOne({ _id: decoded.id });
+  let currUser = await User.findOne({ _id: decoded.id });
+
+  let currTutor;
 
   if (!currUser) {
-    return next(
-      new AppError(`User doesn't exists now, please log in again`, 401)
-    );
+    currTutor = await Tutor.findOne({ _id: decoded.id }).populate('user');
+
+    if (!currTutor)
+      return next(
+        new AppError(`User doesn't exists now, please log in again`, 401)
+      );
   }
 
   // 4. CHECK IF USER CHANGED PASSWORD AFTER JWT SIGN
   // NOT NEEDED, FOR NOW, AS CHANGED PASSWORD IS NOT IMPLEMENTED
 
-  req.user = currUser;
+  if (currUser) {
+    req.user = currUser;
+  }
+
+  if (currTutor) {
+    req.tutor = currTutor;
+  }
   next();
 });
 
 // JWT RECOMMENDS THE SECRET LENGTH TO BE OF ATLEAST 32 CHARACTER
-exports.sendJwtToken = (user, res) => {
+const sendJwtToken = (user, res) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES,
   });
@@ -168,3 +180,5 @@ exports.logout = (req, res, next) => {
     status: 'success',
   });
 };
+
+exports.sendJwtToken = sendJwtToken;

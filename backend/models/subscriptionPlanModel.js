@@ -17,8 +17,8 @@ const subscriptionPlanSchema = new mongoose.Schema({
     default: Date.now,
   }, // Date from which the plan becomes available
   availableUntil: Date, // Date until which the plan remains available
+  daysOfWeek: [{ type: Number, min: 0, max: 6 }], // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
   timeSlot: {
-    daysOfWeek: [{ type: Number, min: 0, max: 6 }], // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
     startTime: String, // HH:MM format
     duration: { type: Number, enum: [30, 45, 60] }, // HH:MM format
   },

@@ -47,6 +47,7 @@ const signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     languages: req.body.languages,
+    accountType: 'tutor',
   });
 
   // SEND CONFIRMATION EMAIL

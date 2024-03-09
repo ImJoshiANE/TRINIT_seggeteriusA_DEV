@@ -31,8 +31,8 @@ const TutorCard = ({tutor}) => {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center gap-1">
-          {tutor.expertise.map((it) => (
-            <div className="flex items-center justify-between gap-1">
+          {tutor.expertise.map((it, i) => (
+            <div key={i} className="flex items-center justify-between gap-1">
               <Badge>{it.language}</Badge>
               <Badge variant="outline">{it.experience}+ years</Badge>
             </div>

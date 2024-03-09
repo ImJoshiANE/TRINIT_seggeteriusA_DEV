@@ -1,4 +1,4 @@
-import React, { Children, createContext, useState } from "react";
+import React, { Children, createContext, useEffect, useState } from "react";
 import "./App.css";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
@@ -11,10 +11,11 @@ import Classes from "./components/dashboard/Classes";
 import Profile from "./components/dashboard/Profile";
 import FlashCards from "./components/dashboard/FlashCards";
 import SetSchedule from "./components/dashboard/SetSchedule";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import TutorProfile from "./components/tutorProfile/TutorProfile";
-import VideoScreen from "./components/videoscreen/VideoScreen";
+import { Toaster } from "@/components/ui/toaster";
+// import VideoScreen from "./components/videoscreen/VideoScreen";
+
 
 export const GlobalContext = createContext();
 const userInitialValue = {
@@ -25,66 +26,29 @@ const userInitialValue = {
   languages: [],
 };
 
-const router = createBrowserRouter([
-  {
-    path: "/userdashboard",
-    element: <UserDashboard />,
-    children: [
-      {
-        path: "",
-        element: <Profile />,
-      },
-      {
-        path: "profile",
-        element: <Profile />,
-      },
-      {
-        path: "classes",
-        element: <Classes />,
-      },
-      {
-        path: "flashcards",
-        element: <FlashCards />,
-      },
-    ],
-  },
-  {
-    path: "/tutordashboard",
-    element: <TutorDashboard />,
-    children: [
-      {
-        path: "",
-        element: <Profile />,
-      },
-      {
-        path: "profile",
-        element: <Profile />,
-      },
-      {
-        path: "classes",
-        element: <Classes />,
-      },
-      {
-        path: "setschedule",
-        element: <SetSchedule />,
-      },
-    ],
-  },
-  {
-    path: "/tutorlive/:id",
-    element: <VideoScreen isStudent={false} />,
-  },
-  {
-    path: "/studentlive/:id",
-    element: <VideoScreen isStudent={true} />,
-  },
-]);
-
+const languages = [
+  { value: "hindi", label: "Hindi" },
+  { value: "bengali", label: "Bengali" },
+  { value: "telugu", label: "Telugu" },
+  { value: "marathi", label: "Marathi" },
+  { value: "tamil", label: "Tamil" },
+  { value: "urdu", label: "Urdu" },
+  { value: "gujarati", label: "Gujarati" },
+  { value: "kannada", label: "Kannada" },
+  { value: "odia", label: "Odia" },
+  { value: "punjabi", label: "Punjabi" },
+  { value: "english", label: "English" },
+];
 
 function App() {
   const [user, setUser] = useState(userInitialValue);
+
+  useEffect(() => {
+
+  }, []);
+
   return (
-    <GlobalContext.Provider value={{ user }}>
+    <GlobalContext.Provider value={{ user, languages, setUser }}>
       <BrowserRouter>
         <Header />
         <Routes>
@@ -103,8 +67,11 @@ function App() {
           </Route>
           <Route path="/setschedule" element={<SetSchedule />} />
           <Route path="/tutorProfile" element={<TutorProfile />} />
+          {/* <Route path="/tutorlive/:id" element={<VideoScreen isStudent={false} />} />
+          <Route path="/studentlive/:id" element={<VideoScreen isStudent={true} />} /> */}
         </Routes>
         <Footer />
+        <Toaster />
       </BrowserRouter>
     </GlobalContext.Provider>
   );

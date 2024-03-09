@@ -16,7 +16,7 @@ import TutorProfile from "./components/tutorProfile/TutorProfile";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
-// import VideoScreen from "./components/videoscreen/VideoScreen";
+import VideoScreen from "./components/videoscreen/VideoScreen";
 
 export const GlobalContext = createContext();
 const userInitialValue = {
@@ -88,11 +88,17 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={isTutor() ? <TutorDashboard/> : <UserDashboard />}>
+          <Route
+            path="/dashboard"
+            element={isTutor() ? <TutorDashboard /> : <UserDashboard />}
+          >
             <Route index element={<Profile />} />
             <Route path="profile" element={<Profile />} />
             <Route path="classes" element={<Classes />} />
-            <Route path="flashcards" element={isTutor() ? <SetSchedule/> : <FlashCards />} />
+            <Route
+              path="flashcards"
+              element={isTutor() ? <SetSchedule /> : <FlashCards />}
+            />
           </Route>
           {/* <Route path="/tutordashboard" element={<TutorDashboard />}>
             <Route index element={<Profile />} />
@@ -102,8 +108,14 @@ function App() {
           </Route> */}
           {/* <Route path="/setschedule" element={<SetSchedule />} /> */}
           <Route path="/tutorProfile" element={<TutorProfile />} />
-          {/* <Route path="/tutorlive/:id" element={<VideoScreen isStudent={false} />} />
-          <Route path="/studentlive/:id" element={<VideoScreen isStudent={true} />} /> */}
+          <Route
+            path="/tutorlive/:id"
+            element={<VideoScreen isStudent={false} />}
+          />
+          <Route
+            path="/studentlive/:id"
+            element={<VideoScreen isStudent={true} />}
+          />
         </Routes>
         <Toaster />
       </BrowserRouter>

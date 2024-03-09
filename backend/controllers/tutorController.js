@@ -6,7 +6,23 @@ const SubscriptionPlan = require('../models/subscriptionPlanModel');
 const User = require('../models/userModel');
 
 const { sendJwtToken } = require('./authController');
-const getTutors = catchAsync(async (req, res, next) => {});
+
+const getAllTutors = catchAsync(async (req, res, next) => {
+  const tutors = await Tutor.find().populate('user');
+
+  if (!tutors) {
+    return next(new AppError('No tutor found with that ID', 404));
+  }
+
+  const data = {
+    tutors,
+  };
+
+  res.status(200).json({
+    status: 'success',
+    data,
+  });
+});
 
 const getTutor = catchAsync(async (req, res, next) => {
   const id = req.params.id;
@@ -73,4 +89,4 @@ const login = catchAsync(async (req, res, next) => {
   sendJwtToken(tutor, res);
 });
 
-module.exports = { getTutors, getTutor, signup, login };
+module.exports = { getTutor, signup, login, getAllTutors };

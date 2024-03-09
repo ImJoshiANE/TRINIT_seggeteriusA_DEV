@@ -16,8 +16,8 @@ const TutorList = () => {
   return (
     <div className="w-full flex flex-col items-center justify-center mb-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 place-items-center lg:w-[780px] xl:w-[1000px] my-10">
-        {tutorList.map((tutor) => (
-          <TutorCard tutor={tutor} />
+        {tutorList.map((tutor, i) => (
+          <TutorCard key={i} tutor={tutor} />
         ))}
       </div>
       <Pagination>

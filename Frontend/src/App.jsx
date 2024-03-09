@@ -11,10 +11,11 @@ import Classes from "./components/dashboard/Classes";
 import Profile from "./components/dashboard/Profile";
 import FlashCards from "./components/dashboard/FlashCards";
 import SetSchedule from "./components/dashboard/SetSchedule";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import TutorProfile from "./components/tutorProfile/TutorProfile";
 import { Toaster } from "@/components/ui/toaster";
+// import VideoScreen from "./components/videoscreen/VideoScreen";
+
 
 export const GlobalContext = createContext();
 const userInitialValue = {
@@ -43,7 +44,7 @@ function App() {
   const [user, setUser] = useState(userInitialValue);
 
   useEffect(() => {
-    
+
   }, []);
 
   return (
@@ -66,6 +67,8 @@ function App() {
           </Route>
           <Route path="/setschedule" element={<SetSchedule />} />
           <Route path="/tutorProfile" element={<TutorProfile />} />
+          {/* <Route path="/tutorlive/:id" element={<VideoScreen isStudent={false} />} />
+          <Route path="/studentlive/:id" element={<VideoScreen isStudent={true} />} /> */}
         </Routes>
         <Footer />
         <Toaster />

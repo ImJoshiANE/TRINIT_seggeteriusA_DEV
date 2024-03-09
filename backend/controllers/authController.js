@@ -55,7 +55,8 @@ exports.isloggedIn = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data
+    data,
+  });
 });
 
 // A MIDDLEWARE TO RESTRICT USER ACCESS TO CERTAIN FUNCTIONN,

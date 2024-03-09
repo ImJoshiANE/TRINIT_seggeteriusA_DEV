@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Card,
   CardContent,
@@ -27,7 +27,9 @@ const DaysComponent = ({ selectedDays }) => {
   const renderDays = () => {
     return daysOfWeek.map((day, index) => {
       return selectedDays.includes(index) ? (
-        <p key={index} className="underline">{daysOfWeek[index]}</p>
+        <p key={index} className="underline">
+          {daysOfWeek[index]}
+        </p>
       ) : (
         <p key={index}>{day}</p>
       );
@@ -38,22 +40,40 @@ const DaysComponent = ({ selectedDays }) => {
 };
 
 const SubscriptionPlanCard = ({ subscriptionPlanData, upcoming }) => {
-  const {tutorData, setTutorData} = useContext(TutorContext);
+  const { toast } = useToast();
+  const { tutorData, setTutorData } = useContext(TutorContext);
   const [price, setPrice] = useState(0);
   const [planIdx, setPlanIdx] = useState(-1);
   const [monthIdx, setMonthIdx] = useState(-1);
   const [levelIdx, setLevelIdx] = useState(-1);
   const isUpcoming = isUpcomingOrNot(subscriptionPlanData.availableFrom);
 
+  const handleSubscribe = (upcoming) => {
+    if (upcoming) {
+      toast({ description: "You can't subscribe to upcoming plans" });
+      return;
+    }
+
+    if (planIdx === -1 || monthIdx === -1 || levelIdx === -1) {
+      toast({ description: "Please select all the fields" });
+      return;
+    }
+
+    const selectedPlan = subscriptionPlanData.timeSlots[planIdx];
+    const selectedLevel = tutorData.pricing[levelIdx].level;
+    const selectedMonth = subscriptionPlanData.duration[monthIdx];
+    const selectedPrice = price;
+  };
+
   useEffect(() => {
-    if(planIdx !== -1 && monthIdx !== -1 && levelIdx !== -1) {
+    if (planIdx !== -1 && monthIdx !== -1 && levelIdx !== -1) {
       const priceForLevel = tutorData.pricing[levelIdx].price;
       const calcPrice =
-        (subscriptionPlanData.timeSlots[planIdx].duration/60) *
+        (subscriptionPlanData.timeSlots[planIdx].duration / 60) *
         subscriptionPlanData.duration[monthIdx] *
         priceForLevel *
         subscriptionPlanData.minSessionsPerMonth;
-      setPrice(Math.round(calcPrice))
+      setPrice(Math.round(calcPrice));
     }
   }, [planIdx, monthIdx, levelIdx]);
 
@@ -140,7 +160,9 @@ const SubscriptionPlanCard = ({ subscriptionPlanData, upcoming }) => {
           <p>₹{price}</p>
         </div>
 
-        <Button disabled={upcoming}>Subscribe</Button>
+        <Button disabled={upcoming} onClick={() => handleSubscribe(upcoming)}>
+          Subscribe
+        </Button>
       </CardFooter>
     </Card>
   );

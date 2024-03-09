@@ -36,15 +36,20 @@ exports.isloggedIn = catchAsync(async (req, res, next) => {
   // 3. CHECK IF USER STILL EXIST
   const currUser = await User.findOne({ _id: decoded.id });
 
+  let currTutor;
+
   if (!currUser) {
-    return next();
+    currTutor = await Tutor.findOne({ _id: decoded.id }).populate('user');
+
+    if (!currTutor)
+      return next(
+        new AppError(`User doesn't exists now, please log in again`, 401)
+      );
   }
 
   // 4. CHECK IF USER CHANGED PASSWORD AFTER JWT SIGN
   // NOT NEEDED NOW
 
-  // PASSING THE USER TO RES.LOCALS, SO THAT TO ACCESS IT IN PUG
-  res.locals.user = currUser;
   next();
 });
 
@@ -94,6 +99,22 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.tutor = currTutor;
   }
   next();
+});
+
+const verifyUser = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+  // 1. CHECK IF EMAIL PASSWORD EXIST
+
+  if (!email || !password) {
+    return next(new AppError('Please enter email and password!', 404));
+  }
+  // 2. CHECK IF USER EXIST AND PASSWORD IS CORRECT
+  const user = await User.findOne({ email }).select('+password');
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError('Invalid Email or Password!', 500));
+  }
+
+  return user;
 });
 
 // JWT RECOMMENDS THE SECRET LENGTH TO BE OF ATLEAST 32 CHARACTER
@@ -154,17 +175,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
-  // 1. CHECK IF EMAIL PASSWORD EXIST
-
-  if (!email || !password) {
-    return next(new AppError('Please enter email and password!', 404));
-  }
-  // 2. CHECK IF USER EXIST AND PASSWORD IS CORRECT
-  const user = await User.findOne({ email }).select('+password');
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('Invalid Email or Password!', 500));
-  }
+  const user = await verifyUser(req, res, next);
 
   // 3. SEND TOKEN TO CLIENT
   sendJwtToken(user, res);

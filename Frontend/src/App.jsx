@@ -14,6 +14,7 @@ import SetSchedule from "./components/dashboard/SetSchedule";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import TutorProfile from "./components/tutorProfile/TutorProfile";
+import VideoScreen from "./components/videoscreen/VideoScreen";
 
 export const GlobalContext = createContext();
 const userInitialValue = {
@@ -23,6 +24,62 @@ const userInitialValue = {
   profilePicture: "",
   languages: [],
 };
+
+const router = createBrowserRouter([
+  {
+    path: "/userdashboard",
+    element: <UserDashboard />,
+    children: [
+      {
+        path: "",
+        element: <Profile />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+      {
+        path: "classes",
+        element: <Classes />,
+      },
+      {
+        path: "flashcards",
+        element: <FlashCards />,
+      },
+    ],
+  },
+  {
+    path: "/tutordashboard",
+    element: <TutorDashboard />,
+    children: [
+      {
+        path: "",
+        element: <Profile />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+      {
+        path: "classes",
+        element: <Classes />,
+      },
+      {
+        path: "setschedule",
+        element: <SetSchedule />,
+      },
+    ],
+  },
+  {
+    path: "/tutorlive/:id",
+    element: <VideoScreen isStudent={false} />,
+  },
+  {
+    path: "/studentlive/:id",
+    element: <VideoScreen isStudent={true} />,
+  },
+]);
+
 
 function App() {
   const [user, setUser] = useState(userInitialValue);

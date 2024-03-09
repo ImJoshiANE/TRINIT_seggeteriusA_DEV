@@ -71,7 +71,7 @@ export default function Profile() {
   return (
     <>
       <Heading2 heading={"Personal Details"} />
-      <AvatarDemo picPath={img} className="w-50 h-50 my-5" />
+      <AvatarDemo picPath={img} className="w-50 h-50 my-5 z-0" />
       <div className="grid w-full max-w-sm items-center gap-1.5 mb-12">
         <Label className="text-center" htmlFor="picture">
           Update Profile Picture

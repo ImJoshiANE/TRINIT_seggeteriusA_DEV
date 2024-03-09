@@ -7,8 +7,9 @@ import { useNavigate } from "react-router-dom";
 const Header = () => {
   const navigate = useNavigate();
   const { user } = useContext(GlobalContext);
+
   return (
-    <div className="flex justify-between items-center gap-2 px-4 bg-black h-16">
+    <div className="flex justify-between items-center gap-2 px-4 bg-primary h-16 sticky top-0 z-50">
       <div
         className="text-white text-3xl hover:cursor-pointer"
         onClick={() => navigate("/")}

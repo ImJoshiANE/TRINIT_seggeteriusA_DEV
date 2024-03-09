@@ -52,7 +52,7 @@ const Login = () => {
 
   return (
     <Dialog>
-      <DialogTrigger>{isLogin ? "Login" : "Signup"}</DialogTrigger>
+      <DialogTrigger className="bg-slate-400 text-xl px-4 py-1 rounded-full">{isLogin ? "Login" : "Signup"}</DialogTrigger>
       <DialogContent className="w-80">
         <DialogHeader>
           <DialogTitle>{isLogin ? "Login" : "Signup"}</DialogTitle>

@@ -34,14 +34,14 @@ exports.isloggedIn = catchAsync(async (req, res, next) => {
   const decoded = await jwt.verify(token, process.env.JWT_SECRET);
 
   // 3. CHECK IF USER STILL EXIST
-  const currUser = await User.findOne({ _id: decoded.id });
+  const user = await User.findOne({ _id: decoded.id });
 
-  let currTutor;
+  let tutor;
 
-  if (!currUser) {
-    currTutor = await Tutor.findOne({ _id: decoded.id }).populate('user');
+  if (!user) {
+    tutor = await Tutor.findOne({ _id: decoded.id }).populate('user');
 
-    if (!currTutor)
+    if (!tutor)
       return next(
         new AppError(`User doesn't exists now, please log in again`, 401)
       );
@@ -50,7 +50,11 @@ exports.isloggedIn = catchAsync(async (req, res, next) => {
   // 4. CHECK IF USER CHANGED PASSWORD AFTER JWT SIGN
   // NOT NEEDED NOW
 
-  next();
+  const data = user || tutor;
+
+  res.status(200).json({
+    status: 'success',
+    data
 });
 
 // A MIDDLEWARE TO RESTRICT USER ACCESS TO CERTAIN FUNCTIONN,

@@ -8,7 +8,7 @@ router.post('/signup', tutorController.signup);
 router.post('/login', tutorController.login);
 // router.get('/logout', tutorController.logout);
 
-router.get('/', tutorController.getTutors);
+router.get('/', tutorController.getAllTutors);
 router.get('/:id', tutorController.getTutor);
 
 // router.patch("/updateMe", userController.updateMe);

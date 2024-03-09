@@ -1,27 +1,33 @@
-const nodemailer = require("nodemailer");
-const pug = require("pug");
-const htmlToText = require("html-to-text");
+const nodemailer = require('nodemailer');
+const pug = require('pug');
+const htmlToText = require('html-to-text');
 
 module.exports = class Email {
-  constructor(user, url, emailToSend, grpName) {
-    this.to = emailToSend;
-    this.firstName = user.name.split(" ")[0];
-    this.grpName = grpName;
+  constructor(user, url) {
+    this.to = user.email;
+    this.firstName = user.fullName.split(' ')[0];
     this.url = url;
     this.from = `Anuj Sharma <anuj21.dev@outlook.com>`;
   }
 
   newTransport() {
+    console.log(
+      process.env.EMAIL_HOST,
+      process.env.EMAIL_PORT,
+      process.env.EMAIL_USERNAME,
+      process.env.EMAIL_PASSWORD
+    );
     return nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
-      // port: process.env.EMAIL_PORT,
+      port: process.env.EMAIL_PORT,
       secureConnection: false,
       auth: {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
       },
       tls: {
-        ciphers: "SSLv3",
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false,
       },
     });
   }
@@ -34,7 +40,6 @@ module.exports = class Email {
       {
         firstName: this.firstName,
         url: this.url,
-        grpName: this.grpName,
         subject,
       }
     );
@@ -52,6 +57,6 @@ module.exports = class Email {
   }
 
   async sendAccountConfirmation() {
-    await this.send("accountConfirmation", "Email Confirmation");
+    await this.send('accountConfirmation', 'Email Confirmation');
   }
 };

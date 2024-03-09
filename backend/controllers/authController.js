@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const Tutor = require('../models/tutorModel');
 const { catchAsync } = require('../utils/util');
 const AppError = require('../utils/appError');
+const Email = require('../utils/email');
 
 exports.restrictTo = (...accTypes) => {
   return (req, res, next) => {
@@ -151,6 +152,31 @@ const sendConfirmationEmail = catchAsync(async (user, req) => {
   const confirmationURL = `${req.protocol}://${req.hostname}/confirmEmail/${confirmationToken}`;
 
   await new Email(user, confirmationURL).sendAccountConfirmation();
+});
+
+exports.confirmEmail = catchAsync(async (req, res, next) => {
+  const hashedToken = await crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({ emailConfirmationToken: hashedToken });
+
+  if (!user) {
+    return next(
+      new AppError('This token is invalid! Please get a new token', 400)
+    );
+  }
+
+  user.emailConfirmed = true;
+  user.emailConfirmationToken = undefined;
+
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Email confirmed successfully',
+  });
 });
 
 exports.signup = catchAsync(async (req, res, next) => {

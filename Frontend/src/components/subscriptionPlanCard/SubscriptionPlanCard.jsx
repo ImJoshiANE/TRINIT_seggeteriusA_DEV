@@ -20,6 +20,8 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { isUpcomingOrNot } from "@/utils/isUpcoming";
+import { useToast } from "../ui/use-toast";
+import axios from "axios";
 
 const DaysComponent = ({ selectedDays }) => {
   const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
@@ -39,61 +41,127 @@ const DaysComponent = ({ selectedDays }) => {
   return <div className="flex gap-1">{renderDays()}</div>;
 };
 
+function formattedDate(dateString) {
+  const dateObject = new Date(dateString);
+
+  console.log(dateObject);
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const formattedDate = `${dateObject.getUTCDate()} ${
+    months[dateObject.getUTCMonth()]
+  } ${dateObject.getUTCFullYear() % 100}`;
+
+  return formattedDate;
+}
+
+const checkoutHandler = async (amount) => {
+  const {
+    data: { key },
+  } = await axios.get("/api/payment/getkey");
+
+  const {
+    data: { order },
+  } = await axios.post("/api/payment/checkout", {
+    amount,
+  });
+
+  const options = {
+    key,
+    amount: order.amount,
+    currency: "INR",
+    name: "Saggetrius A*",
+    description: "Payment module",
+    image: "",
+    order_id: order.id,
+    callback_url: "/api/payment/paymentverification",
+    prefill: {},
+    notes: {
+      address: "Razorpay Corporate Office",
+      mobile: "9999999999",
+    },
+    theme: {
+      color: "#121212",
+    },
+  };
+  const razor = new window.Razorpay(options);
+  razor.open();
+};
+
 const SubscriptionPlanCard = ({ subscriptionPlanData, upcoming }) => {
   const { toast } = useToast();
   const { tutorData, setTutorData } = useContext(TutorContext);
-  const [price, setPrice] = useState(0);
-  const [planIdx, setPlanIdx] = useState(-1);
+  const [price, setPrice] = useState(100);
+  const [sessionDurIdx, setSessionDurIdx] = useState(0);
+  const [sessionStartIdx, setSessionStartIdx] = useState(-1);
   const [monthIdx, setMonthIdx] = useState(-1);
   const [levelIdx, setLevelIdx] = useState(-1);
-  const isUpcoming = isUpcomingOrNot(subscriptionPlanData.availableFrom);
+  const isUpcoming = isUpcomingOrNot(subscriptionPlanData.regOpenFrom);
 
-  const handleSubscribe = (upcoming) => {
+  const handleSubscribe = (upcoming, price) => {
     if (upcoming) {
       toast({ description: "You can't subscribe to upcoming plans" });
       return;
     }
 
-    if (planIdx === -1 || monthIdx === -1 || levelIdx === -1) {
-      toast({ description: "Please select all the fields" });
-      return;
-    }
+    // if (sessionStartIdx === -1 || monthIdx === -1 || levelIdx === -1) {
+    //   toast({ description: "Please select all the fields" });
+    //   return;
+    // }
 
-    const selectedPlan = subscriptionPlanData.timeSlots[planIdx];
-    const selectedLevel = tutorData.pricing[levelIdx].level;
-    const selectedMonth = subscriptionPlanData.duration[monthIdx];
-    const selectedPrice = price;
+    checkoutHandler(price);
   };
 
   useEffect(() => {
-    if (planIdx !== -1 && monthIdx !== -1 && levelIdx !== -1) {
-      const priceForLevel = tutorData.pricing[levelIdx].price;
+    if (sessionStartIdx !== -1 && monthIdx !== -1 && levelIdx !== -1) {
+      const levels = {
+        0: "beginner",
+        1: "intermediate",
+        2: "advance",
+      };
+
+      const priceForLevel = tutorData.pricing[levels[levelIdx]];
       const calcPrice =
-        (subscriptionPlanData.timeSlots[planIdx].duration / 60) *
-        subscriptionPlanData.duration[monthIdx] *
+        (subscriptionPlanData.sessionDuration / 60) *
+        subscriptionPlanData.validity[monthIdx] *
         priceForLevel *
         subscriptionPlanData.minSessionsPerMonth;
       setPrice(Math.round(calcPrice));
     }
-  }, [planIdx, monthIdx, levelIdx]);
+  }, [monthIdx, levelIdx, tutorData.pricing, subscriptionPlanData]);
+
+  console.log(subscriptionPlanData.regOpenTill);
 
   return (
-    <Card className="h-[410px] w-60">
+    <Card className="h-[460px] w-80">
       <CardHeader>
-        <CardTitle>{subscriptionPlanData.name}</CardTitle>
+        <CardTitle>{subscriptionPlanData.title}</CardTitle>
         <CardDescription>{subscriptionPlanData.description}</CardDescription>
       </CardHeader>
       <CardContent className="h-[245px] flex flex-col justify-between">
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <p>Sessions/month</p>
           <Badge>{subscriptionPlanData.minSessionsPerMonth}+</Badge>
-        </div>
+        </div> */}
         <div className="flex items-center justify-between">
-          <p>{isUpcoming ? "Starting date" : "Closing date"}</p>
-          <Badge>
+          <p>{isUpcoming ? "Registeration Start" : "Registration End"}</p>
+          <Badge className="ml-5">
             {isUpcoming
-              ? subscriptionPlanData.availableFrom
-              : subscriptionPlanData.availableUntil}
+              ? formattedDate(subscriptionPlanData.regOpenFrom)
+              : formattedDate(subscriptionPlanData.regOpenTill)}
           </Badge>
         </div>
         <div className="flex items-center justify-between">
@@ -120,15 +188,15 @@ const SubscriptionPlanCard = ({ subscriptionPlanData, upcoming }) => {
             </SelectTrigger>
 
             <SelectContent>
-              {subscriptionPlanData.duration.map((dur, i) => (
+              {subscriptionPlanData.validity.map((val, i) => (
                 <SelectItem key={i} value={i}>
-                  {dur}
+                  {val}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <Select onValueChange={(value) => setPlanIdx(Number(value))}>
+        {/* <Select onValueChange={(value) => setPlanIdx(Number(value))}>
           <SelectTrigger className="h-20">
             <SelectValue placeholder="Choose your plan" />
           </SelectTrigger>
@@ -152,7 +220,39 @@ const SubscriptionPlanCard = ({ subscriptionPlanData, upcoming }) => {
               </SelectItem>
             ))}
           </SelectContent>
-        </Select>
+        </Select> */}
+
+        <div className="flex gap-2">
+          <Select onValueChange={(value) => setSessionDurIdx(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Duration" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {subscriptionPlanData.sessionDuration.map((dur, i) => (
+                <SelectItem key={i} value={i}>
+                  {dur}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select onValueChange={(value) => setSessionStartIdx(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Starts At" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {subscriptionPlanData.sessionStartAt.map((at, i) => (
+                <SelectItem key={i} value={i}>
+                  {at}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <DaysComponent selectedDays={subscriptionPlanData.daysOfWeek} />
       </CardContent>
       <CardFooter className="flex items-center justify-between">
         <div>
@@ -160,7 +260,10 @@ const SubscriptionPlanCard = ({ subscriptionPlanData, upcoming }) => {
           <p>₹{price}</p>
         </div>
 
-        <Button disabled={upcoming} onClick={() => handleSubscribe(upcoming)}>
+        <Button
+          disabled={upcoming}
+          onClick={() => handleSubscribe(upcoming, price)}
+        >
           Subscribe
         </Button>
       </CardFooter>

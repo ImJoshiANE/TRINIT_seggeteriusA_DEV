@@ -16,7 +16,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
 import { GlobalContext } from "@/App";
 
-
 const Login = () => {
   const { toast } = useToast();
   const [type, setType] = useState("Student");
@@ -31,7 +30,7 @@ const Login = () => {
   const { languages, setUser } = useContext(GlobalContext);
 
   const handleMultiChange = (selectedOptions) => {
-    const langs = selectedOptions.map(option => option.value);
+    const langs = selectedOptions.map((option) => option.value);
     setSelectedLanguages(langs);
   };
 
@@ -70,7 +69,7 @@ const Login = () => {
 
       if (res.data?.status === "success") {
         toast({
-          description: "Signup successful"
+          description: "Signup successful",
         });
         setUser({
           fullName: res.data.fullName,
@@ -118,13 +117,15 @@ const Login = () => {
       password,
     };
 
+    let url = `/api/users/login`;
+
+    if (type === "Tutor") {
+      url = `/api/tutors/login`;
+    }
+
     try {
       setIsSubmitting(true);
-      const res = await axios.post(
-        `api/users/login`,
-        { ...data },
-        { withCredentials: true }
-      );
+      const res = await axios.post(url, { ...data }, { withCredentials: true });
 
       if (res.data?.status === "success") {
         toast({
@@ -147,7 +148,7 @@ const Login = () => {
       console.log(error);
       const msg = error.response.data.message || error.response.data.error;
       toast({
-        description: msg
+        description: msg,
       });
     } finally {
       setIsSubmitting(false);
@@ -175,22 +176,22 @@ const Login = () => {
             {isLogin ? "Login into your account" : "Register please"}
           </DialogDescription>
         </DialogHeader>
+        <RadioGroup
+          defaultValue="Student"
+          className="flex items-center justify-between w-10"
+          onValueChange={(value) => setType(value)}
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="Tutor" id="tutor" />
+            <Label htmlFor="tutor">Tutor</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="Student" id="student" />
+            <Label htmlFor="student">Student</Label>
+          </div>
+        </RadioGroup>
         {!isLogin && (
           <>
-            <RadioGroup
-              defaultValue="Student"
-              className="flex items-center justify-between w-10"
-              onValueChange={(value) => setType(value)}
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Tutor" id="tutor" />
-                <Label htmlFor="tutor">Tutor</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Student" id="student" />
-                <Label htmlFor="student">Student</Label>
-              </div>
-            </RadioGroup>
             <Input
               placeholder={"Enter your name"}
               onChange={(e) => setName(e.target.value)}

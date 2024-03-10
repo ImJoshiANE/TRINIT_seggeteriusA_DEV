@@ -1,9 +1,11 @@
-import React, {createContext, useState} from 'react'
-import SubscriptionPlanTutor from '../subscriptionPlanTutor/SubscriptionPlanTutor'
+import React, { createContext, useEffect, useState } from "react";
+import SubscriptionPlanTutor from "../subscriptionPlanTutor/SubscriptionPlanTutor";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
-import { Separator } from '@radix-ui/react-select';
+import { Separator } from "@radix-ui/react-select";
+import { toast } from "../ui/use-toast";
+import axios from "axios";
 
 const tutorDataInitialVal = {
   fullName: "Rishikesh Bhakare",
@@ -24,267 +26,59 @@ const tutorDataInitialVal = {
 const subscriptionPlanListInitialVal = [
   {
     tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
+    name: "Active Plan 1",
+    description: "Active plan description 1",
+    validity: [1, 3, 6],
     minSessionsPerMonth: 10,
-    availableFrom: "2024-03-1",
-    availableUntil: "2024-06-01",
+    regOpenFrom: "2024-03-1",
+    regOpenTill: "2024-06-01",
     language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
+    sessionStartAt: ["14:00", "19:30"],
+    sessionDuration: [30, 45],
+    daysOfWeek: [0, 1, 2],
   },
   {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
+    tutor: "TUTOR_ID_3",
+    name: "Active Plan 2",
+    description: "Active plan description 1",
+    validity: [1, 3, 6],
     minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
+    regOpenFrom: "2024-03-1",
+    regOpenTill: "2024-06-01",
     language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-02",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-08",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-09",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
-  },
-  {
-    tutor: "TUTOR_ID_10",
-    name: "Active Plan 6",
-    description: "Active plan description 6",
-    duration: [1, 3, 6],
-    minSessionsPerMonth: 10,
-    availableFrom: "2024-03-10",
-    availableUntil: "2024-06-01",
-    language: "English",
-    timeSlots: [
-      { daysOfWeek: [0, 1, 2], startTime: "14:00", duration: 30 },
-      { daysOfWeek: [1, 2], startTime: "19:30", duration: 45 },
-    ],
-    isAvailable: false,
+    sessionStartAt: ["14:00", "19:30"],
+    sessionDuration: [30, 45],
+    daysOfWeek: [0, 1, 2],
   },
 ];
 
-export const TutorContext = createContext(); 
+export const TutorContext = createContext();
 
 const TutorProfile = () => {
   const [tutorData, setTutorData] = useState(tutorDataInitialVal);
-  const [subscriptionPlanList, setSubscriptionPlanList] =
-    useState(subscriptionPlanListInitialVal);
+  const [subscriptionPlanList, setSubscriptionPlanList] = useState(
+    subscriptionPlanListInitialVal
+  );
+
+  useEffect(() => {
+    async function fetchSubscriptionPlan() {
+      try {
+        const res = await axios.get(`/api/subscriptionPlan`, {
+          withCredentials: true,
+        });
+
+        setSubscriptionPlanList(res.data.data);
+      } catch (error) {
+        console.log(error);
+        const msg = error.response.data.message || error.response.data.error;
+        toast({
+          description: msg,
+        });
+      }
+    }
+    fetchSubscriptionPlan();
+  }, []);
+
   const avgPrice =
     tutorData.pricing.reduce((acc, it) => acc + it.price, 0) /
     tutorData.pricing.length;
@@ -346,6 +140,6 @@ const TutorProfile = () => {
       </div>
     </TutorContext.Provider>
   );
-}
+};
 
-export default TutorProfile
+export default TutorProfile;

@@ -124,7 +124,7 @@ const verifyUser = catchAsync(async (req, res, next) => {
 });
 
 // JWT RECOMMENDS THE SECRET LENGTH TO BE OF ATLEAST 32 CHARACTER
-const sendJwtToken = (user, res) => {
+const sendJwtToken = (user, res, isTutor = false) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES,
   });
@@ -144,6 +144,15 @@ const sendJwtToken = (user, res) => {
   //     message: "A email confirmation has sent to your email. Please confirm it",
   //   });
   // }
+  let tutor;
+  if (isTutor) {
+    return res.status(200).json({
+      status: 'success',
+      tutor: user,
+      token,
+    });
+  }
+
   return res.status(200).json({
     status: 'success',
     user,
@@ -224,3 +233,5 @@ exports.logout = (req, res, next) => {
 };
 
 exports.sendJwtToken = sendJwtToken;
+
+exports.verifyUser = verifyUser;

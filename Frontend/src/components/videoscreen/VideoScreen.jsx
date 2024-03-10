@@ -3,7 +3,7 @@ import { IoCall } from "react-icons/io5";
 import { FaMicrophone } from "react-icons/fa";
 import { LuScreenShare } from "react-icons/lu";
 import { BsCameraVideoOffFill } from "react-icons/bs";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 function VideoScreen({ isStudent }) {
@@ -67,7 +67,6 @@ function VideoScreen({ isStudent }) {
     console.log("Joining Room");
     let room = "12";
     if (room == " " || room == "") {
-      alert("Please enter room number");
       return;
     }
     room_id = PRE + room + SUF;
@@ -131,14 +130,12 @@ function VideoScreen({ isStudent }) {
   }
 
   return (
-    <div className="bg-[#09090B] w-screen h-screen">
-      <p id="notification"></p>
-
+    <div className="bg-[#09090B] w-screen h-screen ">
       {isStudent && joinRoom()}
 
       {!isStudent && createRoom()}
 
-      <div className="meet-area flex justify-center mt-[px]   ">
+      <div className="meet-area flex justify-center mt-[px]">
         <video
           id={"remote-video"}
           className=" bg-[#18181B]  w-5/12  rounded-3xl min-h-[600px] max-h-[700px] mt-12"
@@ -153,7 +150,9 @@ function VideoScreen({ isStudent }) {
           <FaMicrophone className="text-white text-4xl" />
         </div>
         <div className="bg-[#3C4043] p-2.5 rounded-full">
-          <IoCall className="text-red-700 text-4xl " />
+          <Link to="/">
+            <IoCall className="text-red-700 text-4xl " />
+          </Link>
         </div>
         <div
           className="bg-[#3C4043] p-2.5 rounded-full"

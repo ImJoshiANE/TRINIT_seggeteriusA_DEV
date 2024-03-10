@@ -10,11 +10,14 @@ import {
 } from "@/components/ui/table";
 import { AvatarDemo } from "./AvatarDemo";
 import Heading2 from "../Heading2";
-
+import { useContext } from "react";
+import { GlobalContext } from "@/App";
 
 // Take props later instead of the dummy array
 
-export function ClassesTable({type, user}) {
+export function ClassesTable({ type }) {
+  const { accountType } = useContext(GlobalContext);
+
   const upcomingSessions = [
     {
       tutor: "Micheal Arock",
@@ -81,34 +84,45 @@ export function ClassesTable({type, user}) {
     },
   ];
 
-  const target = type === "Upcoming Classes" ? upcomingSessions : completedSessions;
+  const target =
+    type === "Upcoming Classes" ? upcomingSessions : completedSessions;
+
+  const isTutor = () => {
+    accountType === "tutor";
+  };
 
   return (
     <>
-    <Heading2 heading={type}/>
-    <div>
-    <Table>
-      <TableCaption>. . . . . . . . . . . . . . . .</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead >{user ? "Tutor-Image" : "Student-Image"}</TableHead>
-          <TableHead>{user ? "Tutor Name" : "Student Name"}</TableHead>
-          <TableHead>Start Timing</TableHead>
-          <TableHead className="text-right">Duration</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {upcomingSessions.map((session) => (
-          <TableRow>
-            <TableCell><AvatarDemo picPath={session.tutorImg}/></TableCell>
-            <TableCell>{session.tutor}</TableCell>
-            <TableCell>{session.sTime}</TableCell>
-            <TableCell className="text-right">{session.duration}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-    </div>
+      <Heading2 heading={type} />
+      <div>
+        <Table>
+          <TableCaption>. . . . . . . . . . . . . . . .</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>
+                {!isTutor() ? "Tutor-Image" : "Student-Image"}
+              </TableHead>
+              <TableHead>
+                {!isTutor() ? "Tutor Name" : "Student Name"}
+              </TableHead>
+              <TableHead>Start Timing</TableHead>
+              <TableHead className="text-right">Duration</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {upcomingSessions.map((session) => (
+              <TableRow>
+                <TableCell>
+                  <AvatarDemo picPath={session.tutorImg} />
+                </TableCell>
+                <TableCell>{session.tutor}</TableCell>
+                <TableCell>{session.sTime}</TableCell>
+                <TableCell className="text-right">{session.duration}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </>
   );
 }

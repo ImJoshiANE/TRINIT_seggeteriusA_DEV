@@ -9,12 +9,11 @@ const tutorSchema = new mongoose.Schema({
       experience: Number, // in months
     },
   ],
-  pricing: [
-    {
-      level: { type: String, enum: ['beginner', 'intermediate', 'advance'] },
-      pricePerHour: Number,
-    },
-  ],
+  pricing: {
+    beginner: { type: Number, default: 0 },
+    intermediate: { type: Number, default: 0 },
+    advance: { type: Number, default: 0 },
+  },
 
   totalStudents: { type: Number, default: 0 },
 });

@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "react-select/animated";
+
 const flashcards = [
   { front: "What is the capital of Japan?", back: "Tokyo" },
   { front: "Who wrote 'To Kill a Mockingbird'?", back: "Harper Lee" },
@@ -33,7 +34,7 @@ const FlashCards = () => {
 
   const addFlash = () => {
     console.log("shsh")
-    setFlashs([...flashs, { front: question, back: answer }]);
+    setFlashs([...flashs, {front: question, back: answer }]);
     setIsOpen(false);
   }
 
@@ -46,6 +47,9 @@ const FlashCards = () => {
             key={i}
             frontContent={data.front}
             backContent={data.back}
+            flashs={flashs}
+            idx={i}
+            setFlashs={setFlashs}
           />
         ))}
         <Card className="h-60 w-60 p-5 flex items-center justify-center text-lg">
